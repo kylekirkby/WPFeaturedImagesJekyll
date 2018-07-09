@@ -8,7 +8,7 @@ import shutil
 from io import BytesIO
 import glob
 
-e = xml.etree.ElementTree.parse('wordpress-xml/Posts-Export-2018-July-09-0915.xml').getroot()
+e = xml.etree.ElementTree.parse('xml/Posts-Export-2018-July-09-0915.xml').getroot()
 
 def download_images():
     for each in e.findall('post'):
@@ -93,6 +93,19 @@ def add_featured_images_to_blog_posts(uids, blog_posts):
                         changed_file.writelines(frontmatter.dumps(front_matter))
                         # frontmatter.dump(front_matter, changed_file)
                         print("{0} changed for {1}".format(str(uid[1]), front_matter["featured_image_name"]))
+                if "image" in front_matter.keys():
+                    print(front_matter["image"])
+                else:
+                    count += 1
+                    print("No Image found - adding new image....")
+                    front_matter["image"] = {"name": uid[1],
+                                             "path": "/assets/images/featured-images/" + uid[1],
+                                             "featured": True
+                                             }
+                    with open(post,"w") as changed_file:
+                        changed_file.writelines(frontmatter.dumps(front_matter))
+                        # frontmatter.dump(front_matter, changed_file)
+                        print("{0} changed for {1}".format(str(uid[1]), front_matter["image"]))
                     
     print("{0} posts to be changed!".format(count))
                 
